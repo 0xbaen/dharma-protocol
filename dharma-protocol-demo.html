@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dharma Protocol — The Onchain Memory Layer for Open Collaboration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#050508;color:#e8e8f4;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#050508}
+::-webkit-scrollbar-thumb{background:#2a2a40;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#7c6af7}
+::selection{background:#7c6af733;color:#9d8fff}
+.font-display{font-family:'Syne',sans-serif}
+.font-mono{font-family:'JetBrains Mono',monospace}
+.gradient-text{background:linear-gradient(135deg,#9d8fff 0%,#7c6af7 40%,#22d3a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dharma-card{background:#13131f;border:1px solid #1e1e30;border-radius:12px}
+.dharma-card:hover{border-color:#2a2a40}
+.btn-primary{background:linear-gradient(135deg,#7c6af7,#6355e0);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px #7c6af740}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:transparent;color:#8888aa;border:1px solid #1e1e30;border-radius:8px;padding:9px 18px;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.btn-secondary:hover{border-color:#7c6af7;color:#9d8fff}
+.btn-ghost{background:transparent;color:#8888aa;border:none;padding:6px 12px;font-family:'Space Grotesk',sans-serif;font-size:13px;cursor:pointer;border-radius:6px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost:hover{background:#1e1e30;color:#e8e8f4}
+.dharma-input{background:#0a0a12;border:1px solid #1e1e30;border-radius:8px;color:#e8e8f4;padding:10px 14px;font-family:'Space Grotesk',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s}
+.dharma-input:focus{border-color:#7c6af7;box-shadow:0 0 0 3px #7c6af715}
+.dharma-input::placeholder{color:#44445a}
+.dharma-select{background:#0a0a12;border:1px solid #1e1e30;border-radius:8px;color:#e8e8f4;padding:10px 14px;font-family:'Space Grotesk',sans-serif;font-size:14px;width:100%;outline:none;cursor:pointer;appearance:none}
+.dharma-select:focus{border-color:#7c6af7}
+.dharma-textarea{background:#0a0a12;border:1px solid #1e1e30;border-radius:8px;color:#e8e8f4;padding:10px 14px;font-family:'Space Grotesk',sans-serif;font-size:14px;width:100%;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;line-height:1.5}
+.dharma-textarea:focus{border-color:#7c6af7;box-shadow:0 0 0 3px #7c6af715}
+.dharma-textarea::placeholder{color:#44445a}
+.dharma-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#44445a;display:block;margin-bottom:6px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.04em}
+.badge-purple{background:#7c6af720;color:#9d8fff;border:1px solid #7c6af730}
+.badge-emerald{background:#22d3a020;color:#22d3a0;border:1px solid #22d3a030}
+.badge-amber{background:#f59e0b20;color:#f59e0b;border:1px solid #f59e0b30}
+.badge-rose{background:#f43f5e20;color:#f43f5e;border:1px solid #f43f5e30}
+.badge-sky{background:#38bdf820;color:#38bdf8;border:1px solid #38bdf830}
+.badge-dim{background:#1e1e30;color:#8888aa;border:1px solid #2a2a40}
+.hash-display{font-family:'JetBrains Mono',monospace;font-size:11px;color:#44445a;letter-spacing:.02em}
+.hash-display:hover{color:#7c6af7}
+.timeline-line{position:absolute;left:19px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,#7c6af7,#1e1e30 80%)}
+@keyframes pulse-glow{0%,100%{opacity:.6}50%{opacity:1}}
+.pulse-glow{animation:pulse-glow 2s ease-in-out infinite}
+@keyframes slide-in-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.slide-in-up{animation:slide-in-up .3s ease forwards}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spin{animation:spin .8s linear infinite}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.nav{background:rgba(5,5,8,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #1e1e30;position:sticky;top:0;z-index:100;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-link{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:500;color:#8888aa;transition:all .15s;cursor:pointer;background:none;border:none;font-family:'Space Grotesk',sans-serif}
+.nav-link:hover{color:#e8e8f4;background:#1e1e3040}
+.nav-link.active{color:#9d8fff;background:#7c6af715}
+.page{display:none;min-height:calc(100vh - 56px);animation:fadeIn .25s ease}
+.page.active{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:500;padding:20px}
+.modal-box{background:#13131f;border:1px solid #1e1e30;border-radius:14px;padding:32px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;position:relative;animation:slide-in-up .25s ease}
+.tab-bar{display:flex;gap:4px;border-bottom:1px solid #1e1e30;margin-bottom:20px}
+.tab-btn{padding:9px 16px;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;background:none;border:1px solid transparent;border-bottom:none;color:#44445a;display:inline-flex;align-items:center;gap:6px;transition:all .15s;margin-bottom:-1px}
+.tab-btn.active{background:#13131f;border-color:#1e1e30;color:#9d8fff}
+.tab-count{background:#1e1e30;color:#44445a;font-size:9px;font-weight:700;padding:1px 6px;border-radius:100px}
+.tab-btn.active .tab-count{background:#7c6af7;color:#fff}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn .2s ease}
+.progress-bar{height:3px;background:#1e1e30;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#7c6af7,#22d3a0);border-radius:2px;transition:width .5s ease}
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:340px;pointer-events:none}
+.toast{background:#13131f;border:1px solid #22d3a040;border-radius:10px;padding:14px 18px;display:flex;align-items:flex-start;gap:12px;font-size:13px;box-shadow:0 8px 32px rgba(0,0,0,.6);animation:slide-in-up .3s ease;pointer-events:all}
+.toast-error{border-color:#f43f5e40}
+.toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.toast-text{flex:1}
+.toast-msg{font-weight:600;color:#e8e8f4;font-size:14px}
+.toast-hash{font-family:'JetBrains Mono',monospace;font-size:10px;color:#44445a;margin-top:2px;word-break:break-all}
+.toast-close{background:none;border:none;color:#44445a;cursor:pointer;font-size:14px;padding:0;line-height:1;flex-shrink:0}
+.toast-close:hover{color:#e8e8f4}
+.tl-item{display:flex;gap:16px;margin-bottom:14px;position:relative;animation:fadeIn .35s ease forwards;opacity:0}
+.tl-dot-col{flex-shrink:0;width:38px;display:flex;justify-content:center;padding-top:14px}
+.tl-dot{width:13px;height:13px;border-radius:50%;border:2px solid #13131f;z-index:1;position:relative}
+.tl-card{padding:16px;flex:1}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{padding:20px}
+.stat-label{font-size:11px;color:#44445a;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.stat-value{font-family:'Syne',sans-serif;font-size:30px;font-weight:700}
+.tx-table{overflow:hidden}
+.tx-row{display:grid;grid-template-columns:180px 1fr 150px 90px 130px;gap:10px;padding:12px 16px;align-items:center;border-bottom:1px solid #0f0f1a;transition:background .1s;cursor:default}
+.tx-row:hover{background:#0f0f1a}
+.tx-row:last-child{border-bottom:none}
+.tx-header{display:grid;grid-template-columns:180px 1fr 150px 90px 130px;gap:10px;padding:9px 16px;font-size:9px;color:#44445a;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid #1e1e30}
+.wallet-menu{position:absolute;top:calc(100% + 8px);right:0;background:#13131f;border:1px solid #1e1e30;border-radius:10px;padding:16px;min-width:250px;box-shadow:0 8px 32px rgba(0,0,0,.8);z-index:300;animation:fadeIn .2s ease}
+.info-box{padding:10px 14px;background:#0a0a12;border-radius:8px;border:1px solid #1e1e30}
+.empty-state{padding:56px 24px;text-align:center}
+.empty-icon{font-size:36px;margin-bottom:14px}
+.empty-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.empty-desc{font-size:13px;color:#44445a;margin-bottom:20px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.contrib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.col-gap{display:flex;flex-direction:column;gap:10px}
+.dna-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.dna-stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:#0a0a12;border-radius:8px;border:1px solid #1e1e30;font-size:12px;margin-bottom:7px}
+.dna-stat-key{color:#8888aa}
+.dna-legend{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid #1e1e30;padding-top:10px;margin-top:4px}
+.legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+@media(max-width:980px){
+  .grid-2,.grid-4,.dna-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .tx-row,.tx-header{grid-template-columns:140px 1fr 100px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav-link" style="gap:10px;font-size:16px;color:#e8e8f4;text-decoration:none" onclick="goPage('landing');return false">
+    <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7c6af7,#22d3a0);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 5v6L8 14 2 11V5z" stroke="white" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" fill="white"/></svg>
+    </div>
+    <span class="font-display" style="font-weight:700;font-size:16px;color:#e8e8f4">dharma</span>
+    <span style="font-size:11px;color:#44445a;font-weight:500">protocol</span>
+  </a>
+  <div style="display:flex;align-items:center;gap:4px">
+    <button class="nav-link" id="nav-dashboard" onclick="goPage('dashboard')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-link" id="nav-projects" onclick="goPage('projects')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Projects
+    </button>
+    <button class="nav-link" id="nav-explorer" onclick="goPage('explorer')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Explorer
+    </button>
+  </div>
+  <div style="position:relative" id="wallet-area">
+    <button class="btn-primary" style="padding:7px 14px;font-size:13px" id="connect-btn" onclick="openModal('wallet-modal')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      Connect Wallet
+    </button>
+    <div id="wallet-connected-ui" style="display:none;position:relative">
+      <button id="wallet-btn" onclick="toggleWalletMenu()" style="display:flex;align-items:center;gap:8px;background:#13131f;border:1px solid #7c6af740;border-radius:8px;padding:7px 12px;cursor:pointer;color:#9d8fff;font-size:13px;font-family:'Space Grotesk',sans-serif">
+        <div style="width:8px;height:8px;border-radius:50%;background:#22d3a0" class="pulse-glow"></div>
+        <span class="font-mono" style="font-size:12px" id="wallet-addr-short"></span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="wallet-menu" id="wallet-menu" style="display:none">
+        <div style="font-size:10px;color:#44445a;font-weight:700;letter-spacing:.08em;margin-bottom:8px">CONNECTED WALLET</div>
+        <div class="font-mono" id="wallet-addr-full" style="font-size:11px;color:#9d8fff;word-break:break-all;margin-bottom:16px"></div>
+        <button class="btn-secondary" style="width:100%;justify-content:center;font-size:13px" onclick="disconnectWallet()">Disconnect</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page active" id="page-landing">
+  <section style="padding:80px 24px 60px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:#7c6af715;border:1px solid #7c6af730;border-radius:100px;padding:4px 13px;margin-bottom:24px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#22d3a0" class="pulse-glow"></div>
+        <span style="font-size:12px;color:#9d8fff;font-weight:600;letter-spacing:.06em">BUILT ON CANOPY NETWORK</span>
+      </div>
+      <h1 class="font-display" style="font-size:52px;font-weight:800;line-height:1.1;margin-bottom:20px">
+        The Onchain Memory Layer for <span class="gradient-text">Open Collaboration</span>
+      </h1>
+      <p style="font-size:18px;color:#8888aa;line-height:1.7;margin-bottom:32px">
+        Dharma Protocol permanently preserves the complete social history of collaborative projects. Every contribution, milestone, and discussion becomes an immutable part of the project's DNA.
+      </p>
+      <div style="display:flex;gap:12px;margin-bottom:48px">
+        <button class="btn-primary" style="padding:12px 24px;font-size:15px" onclick="goPage('dashboard')">Open Dashboard &#8594;</button>
+        <button class="btn-secondary" style="padding:12px 24px;font-size:15px" onclick="goPage('projects')">Explore Projects</button>
+      </div>
+      <div style="display:flex;gap:32px">
+        <div><div class="font-display gradient-text" style="font-size:24px;font-weight:700">12</div><div style="font-size:12px;color:#44445a;font-weight:500">Transaction Types</div></div>
+        <div><div class="font-display gradient-text" style="font-size:24px;font-weight:700">:50002</div><div style="font-size:12px;color:#44445a;font-weight:500">Canopy RPC</div></div>
+        <div><div class="font-display gradient-text" style="font-size:24px;font-weight:700">Onchain</div><div style="font-size:12px;color:#44445a;font-weight:500">State</div></div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <div style="background:#0a0a12;border:1px solid #1e1e30;border-radius:16px;padding:24px;position:relative;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1e1e30">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c6af7" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span style="font-size:12px;color:#7c6af7;font-weight:600;letter-spacing:.06em">LIVE TIMELINE</span>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <div style="width:8px;height:8px;border-radius:50%;background:#f43f5e"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:#22d3a0"></div>
+          </div>
+        </div>
+        <div style="position:relative" id="landing-tl">
+          <div class="timeline-line"></div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,#0a0a12,transparent);pointer-events:none"></div>
+      </div>
+      <div style="position:absolute;bottom:-16px;right:-16px;background:#13131f;border:1px solid #22d3a040;border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:8px">
+        <div style="width:6px;height:6px;border-radius:50%;background:#22d3a0"></div>
+        <span class="font-mono" style="font-size:11px;color:#22d3a0">All events onchain</span>
+      </div>
+    </div>
+  </section>
+  <section style="padding:60px 24px;background:#0a0a1280;border-top:1px solid #1e1e30">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:48px">
+        <div style="font-size:12px;color:#7c6af7;font-weight:600;letter-spacing:.1em;margin-bottom:12px">WHY DHARMA PROTOCOL</div>
+        <h2 class="font-display" style="font-size:36px;font-weight:700">Collaboration as Immutable History</h2>
+      </div>
+      <div class="grid-4">
+        <div class="dharma-card" style="padding:24px"><div style="margin-bottom:16px;color:#7c6af7;font-size:20px">&#9889;</div><div style="font-size:15px;font-weight:600;margin-bottom:8px">12 Custom Tx Types</div><div style="font-size:13px;color:#8888aa;line-height:1.6">CREATE_PROJECT through RESOLVE_DISCUSSION — every action is a first-class Canopy blockchain event.</div></div>
+        <div class="dharma-card" style="padding:24px"><div style="margin-bottom:16px;color:#22d3a0;font-size:20px">&#9881;</div><div style="font-size:15px;font-weight:600;margin-bottom:8px">Real RPC Integration</div><div style="font-size:13px;color:#8888aa;line-height:1.6">No mocked data. Every action creates a real Canopy transaction via JSON-RPC on port 50002.</div></div>
+        <div class="dharma-card" style="padding:24px"><div style="margin-bottom:16px;color:#c084fc;font-size:20px">&#9749;</div><div style="font-size:15px;font-weight:600;margin-bottom:8px">Project DNA</div><div style="font-size:13px;color:#8888aa;line-height:1.6">Visual timeline, milestone tree, and contribution graph show the full evolution of every project.</div></div>
+        <div class="dharma-card" style="padding:24px"><div style="margin-bottom:16px;color:#f59e0b;font-size:20px">&#128274;</div><div style="font-size:15px;font-weight:600;margin-bottom:8px">Permanent History</div><div style="font-size:13px;color:#8888aa;line-height:1.6">Who built what, who reviewed it, who shipped it. Immutably recorded on Canopy. Forever.</div></div>
+      </div>
+    </div>
+  </section>
+  <section style="padding:80px 24px;text-align:center">
+    <h2 class="font-display" style="font-size:40px;font-weight:700;margin-bottom:16px">Start Building Permanent History</h2>
+    <p style="font-size:16px;color:#8888aa;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto">Connect your wallet and create your first project. Every contribution becomes permanent on Canopy.</p>
+    <button class="btn-primary" style="padding:14px 32px;font-size:16px;margin:0 auto" onclick="goPage('dashboard')">Launch App &#8594;</button>
+  </section>
+</div>
+
+<div class="page" id="page-dashboard">
+  <div style="max-width:1200px;margin:0 auto;padding:32px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px">
+      <div>
+        <h1 class="font-display" style="font-size:28px;font-weight:700;margin-bottom:4px">Dashboard</h1>
+        <div id="dash-wallet-status" style="font-size:13px;color:#44445a">Connect wallet to submit transactions</div>
+      </div>
+      <button class="btn-primary" id="dash-new-btn" style="display:none" onclick="openModal('modal-create-project')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Project
+      </button>
+    </div>
+    <div class="stat-grid" id="stats-grid">
+      <div class="dharma-card stat-card"><div class="stat-label"><span>Projects</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c6af7" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div class="stat-value" style="color:#7c6af7" id="stat-projects">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label"><span>Transactions</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22d3a0" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="stat-value" style="color:#22d3a0" id="stat-txs">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label"><span>Contributors</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="stat-value" style="color:#c084fc" id="stat-contributors">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label"><span>Block Height</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-value" style="color:#f59e0b" id="stat-blocks">—</div></div>
+    </div>
+    <div id="dash-wallet-cta" class="dharma-card" style="padding:32px;text-align:center;margin-bottom:32px;background:#7c6af708;border-color:#7c6af730">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7c6af7" stroke-width="1.5" style="margin:0 auto 12px;display:block"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+      <h3 class="font-display" style="font-size:18px;font-weight:600;margin-bottom:8px">Connect Your Wallet</h3>
+      <p style="color:#8888aa;font-size:14px;margin-bottom:16px">Connect to create projects, add timeline events, and earn onchain contribution history.</p>
+      <button class="btn-primary" onclick="openModal('wallet-modal')">Connect Wallet</button>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Recent Projects</h2>
+          <button class="btn-ghost" onclick="goPage('projects')" style="font-size:12px;color:#7c6af7">View all &#8594;</button>
+        </div>
+        <div id="dash-projects" class="col-gap"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Activity Feed</h2>
+          <button class="btn-ghost" onclick="goPage('explorer')" style="font-size:12px;color:#7c6af7">Explorer &#8594;</button>
+        </div>
+        <div id="dash-activity" class="col-gap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-projects">
+  <div style="max-width:1200px;margin:0 auto;padding:32px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px">
+      <div>
+        <h1 class="font-display" style="font-size:28px;font-weight:700;margin-bottom:4px">Projects</h1>
+        <div id="projects-count" style="font-size:13px;color:#8888aa"></div>
+      </div>
+      <button class="btn-primary" id="projects-new-btn" style="display:none" onclick="openModal('modal-create-project')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Project
+      </button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <div style="position:relative;flex:1;min-width:200px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#44445a" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="dharma-input" style="padding-left:36px" placeholder="Search projects…" id="projects-search" oninput="renderProjects()">
+      </div>
+      <select class="dharma-select" style="width:auto;min-width:150px" id="projects-cat" onchange="renderProjects()">
+        <option value="">All Categories</option>
+        <option value="defi">DeFi</option><option value="infrastructure">Infrastructure</option>
+        <option value="socialfi">SocialFi</option><option value="nft">NFT</option>
+        <option value="dao">DAO</option><option value="tooling">Tooling</option>
+        <option value="research">Research</option><option value="other">Other</option>
+      </select>
+    </div>
+    <div id="projects-grid" class="projects-grid"></div>
+  </div>
+</div>
+
+<div class="page" id="page-project">
+  <div style="max-width:1200px;margin:0 auto;padding:32px 24px">
+    <button class="btn-ghost" style="margin-bottom:20px;font-size:12px" onclick="goPage('projects')">&#8592; Projects</button>
+    <div class="dharma-card" style="padding:28px;margin-bottom:24px" id="project-header"></div>
+    <div class="tab-bar" id="project-tabs">
+      <button class="tab-btn active" data-tab="timeline" onclick="switchTab(this)">Timeline <span class="tab-count" id="tc-timeline">0</span></button>
+      <button class="tab-btn" data-tab="milestones" onclick="switchTab(this)">Milestones <span class="tab-count" id="tc-milestones">0</span></button>
+      <button class="tab-btn" data-tab="discussions" onclick="switchTab(this)">Discussions <span class="tab-count" id="tc-discussions">0</span></button>
+      <button class="tab-btn" data-tab="releases" onclick="switchTab(this)">Releases <span class="tab-count" id="tc-releases">0</span></button>
+      <button class="tab-btn" data-tab="contributors" onclick="switchTab(this)">Contributors <span class="tab-count" id="tc-contributors">0</span></button>
+      <button class="tab-btn" data-tab="dna" onclick="switchTab(this)">DNA</button>
+    </div>
+    <div class="tab-panel active" id="tab-timeline"></div>
+    <div class="tab-panel" id="tab-milestones"></div>
+    <div class="tab-panel" id="tab-discussions"></div>
+    <div class="tab-panel" id="tab-releases"></div>
+    <div class="tab-panel" id="tab-contributors"></div>
+    <div class="tab-panel" id="tab-dna"></div>
+  </div>
+</div>
+
+<div class="page" id="page-explorer">
+  <div style="max-width:1200px;margin:0 auto;padding:32px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px">
+      <div>
+        <h1 class="font-display" style="font-size:28px;font-weight:700;margin-bottom:4px">Blockchain Explorer</h1>
+        <div style="font-size:13px;color:#8888aa">All Dharma Protocol transactions on Canopy Network</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" id="live-btn" style="font-size:13px" onclick="toggleLive()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Auto-refresh
+        </button>
+        <button class="btn-secondary" style="font-size:13px" onclick="renderExplorer()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="dharma-card stat-card"><div class="stat-label">Block Height</div><div class="stat-value" style="color:#7c6af7" id="exp-blocks">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label">Transactions</div><div class="stat-value" style="color:#22d3a0" id="exp-txs">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label">Projects</div><div class="stat-value" style="color:#c084fc" id="exp-projects">—</div></div>
+      <div class="dharma-card stat-card"><div class="stat-label">Contributors</div><div class="stat-value" style="color:#f59e0b" id="exp-contribs">—</div></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <div style="position:relative;flex:1;min-width:200px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#44445a" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="dharma-input" style="padding-left:36px" placeholder="Search by hash, sender, or type…" id="exp-search" oninput="renderExplorer()">
+      </div>
+      <select class="dharma-select" style="width:auto;min-width:200px" id="exp-filter" onchange="renderExplorer()">
+        <option value="">All Types</option>
+        <option value="1001">CREATE_PROJECT</option><option value="1002">JOIN_PROJECT</option>
+        <option value="1003">INVITE_CONTRIBUTOR</option><option value="1004">ACCEPT_INVITATION</option>
+        <option value="1005">ADD_TIMELINE_EVENT</option><option value="1006">CREATE_MILESTONE</option>
+        <option value="1007">COMPLETE_MILESTONE</option><option value="1008">LINK_GITHUB_COMMIT</option>
+        <option value="1009">ADD_RELEASE</option><option value="1010">ENDORSE_CONTRIBUTION</option>
+        <option value="1011">CREATE_DISCUSSION</option><option value="1012">RESOLVE_DISCUSSION</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:#44445a;margin-bottom:10px" id="exp-count"></div>
+    <div class="dharma-card tx-table">
+      <div class="tx-header"><span>Type</span><span>Hash</span><span>Sender</span><span>Block</span><span>Time</span></div>
+      <div id="exp-table"></div>
+    </div>
+    <div style="margin-top:20px;padding:12px 16px;background:#0a0a12;border-radius:8px;border:1px solid #1e1e30;display:flex;align-items:center;gap:9px">
+      <div style="width:5px;height:5px;border-radius:50%;background:#22d3a0;flex-shrink:0"></div>
+      <span style="font-size:11px;color:#44445a">All transactions are custom Canopy types 1001–1012. In production these hit the Go backend at <span class="font-mono" style="color:#7c6af7">localhost:50002/rpc</span>. This demo simulates the same state machine in-browser.</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="wallet-modal" style="display:none" onclick="closeOnOverlay(event,'wallet-modal')">
+  <div class="modal-box">
+    <button onclick="closeModal('wallet-modal')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#22d3a0);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+      </div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Connect Wallet</div>
+        <div style="font-size:13px;color:#8888aa">Connect to Canopy Network</div>
+      </div>
+    </div>
+    <label class="dharma-label">Wallet Address (optional)</label>
+    <input class="dharma-input" id="wallet-input" placeholder="cnpy1... or leave blank for auto-generated" style="margin-bottom:12px" onkeydown="if(event.key==='Enter')doConnect()">
+    <p style="font-size:12px;color:#44445a;margin-bottom:20px;line-height:1.6">Enter a Canopy address or leave blank to auto-generate one. All transactions will originate from this address.</p>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="doConnect()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/></svg>
+      Connect Wallet
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-create-project" style="display:none" onclick="closeOnOverlay(event,'modal-create-project')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-create-project')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#22d3a0);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Create Project</div>
+        <div style="font-size:12px;color:#8888aa">Writes CREATE_PROJECT to Canopy</div>
+      </div>
+    </div>
+    <label class="dharma-label">Project Name *</label>
+    <input class="dharma-input" id="cp-name" placeholder="e.g. Dharma Protocol" style="margin-bottom:14px">
+    <label class="dharma-label">Description</label>
+    <textarea class="dharma-textarea" id="cp-desc" rows="3" placeholder="What are you building?" style="margin-bottom:14px"></textarea>
+    <label class="dharma-label">Category</label>
+    <select class="dharma-select" id="cp-cat" style="margin-bottom:14px">
+      <option value="socialfi">SocialFi</option><option value="defi">DeFi</option>
+      <option value="infrastructure">Infrastructure</option><option value="nft">NFT</option>
+      <option value="dao">DAO</option><option value="tooling">Tooling</option>
+      <option value="research">Research</option><option value="other">Other</option>
+    </select>
+    <label class="dharma-label">Repository URL</label>
+    <input class="dharma-input" id="cp-repo" placeholder="https://github.com/..." style="margin-bottom:14px">
+    <div class="info-box" style="margin-bottom:16px">
+      <div class="dharma-label" style="margin-bottom:2px">Creator</div>
+      <div class="font-mono" id="cp-creator" style="font-size:11px;color:#9d8fff">—</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-create-project')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="cp-submit" onclick="submitCreateProject()">Create Project &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-join" style="display:none" onclick="closeOnOverlay(event,'modal-join')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-join')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#22d3a0,#7c6af7);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#43;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Join Project</div>
+        <div style="font-size:12px;color:#8888aa">Writes JOIN_PROJECT to Canopy</div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-bottom:14px">
+      <div class="dharma-label" style="margin-bottom:2px">Project</div>
+      <div style="font-size:14px;font-weight:600" id="join-project-name">—</div>
+    </div>
+    <label class="dharma-label">Message (optional)</label>
+    <textarea class="dharma-textarea" id="join-msg" rows="3" placeholder="Why do you want to contribute?" style="margin-bottom:16px"></textarea>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-join')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="join-submit" onclick="submitJoin()">Join Project &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-event" style="display:none" onclick="closeOnOverlay(event,'modal-add-event')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-add-event')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#c084fc);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#9202;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Add Timeline Event</div>
+        <div style="font-size:12px;color:#8888aa">Writes ADD_TIMELINE_EVENT to Canopy</div>
+      </div>
+    </div>
+    <label class="dharma-label">Category</label>
+    <select class="dharma-select" id="ev-cat" style="margin-bottom:14px">
+      <option value="idea">Idea</option><option value="prototype">Prototype</option>
+      <option value="research">Research</option><option value="design">Design</option>
+      <option value="development" selected>Development</option><option value="testing">Testing</option>
+      <option value="deployment">Deployment</option><option value="funding">Funding</option>
+      <option value="community">Community</option>
+    </select>
+    <label class="dharma-label">Title *</label>
+    <input class="dharma-input" id="ev-title" placeholder="e.g. Backend API completed" style="margin-bottom:14px">
+    <label class="dharma-label">Description</label>
+    <textarea class="dharma-textarea" id="ev-desc" rows="3" placeholder="What happened?" style="margin-bottom:16px"></textarea>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-add-event')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="ev-submit" onclick="submitAddEvent()">Add Event &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-milestone" style="display:none" onclick="closeOnOverlay(event,'modal-milestone')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-milestone')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#f43f5e);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#127919;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Create Milestone</div>
+        <div style="font-size:12px;color:#8888aa">Writes CREATE_MILESTONE to Canopy</div>
+      </div>
+    </div>
+    <label class="dharma-label">Title *</label>
+    <input class="dharma-input" id="ms-title" placeholder="e.g. Deploy to Canopy Testnet" style="margin-bottom:14px">
+    <label class="dharma-label">Description</label>
+    <textarea class="dharma-textarea" id="ms-desc" rows="3" placeholder="What needs to be done?" style="margin-bottom:16px"></textarea>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-milestone')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="ms-submit" onclick="submitMilestone()">Create Milestone &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-discussion" style="display:none" onclick="closeOnOverlay(event,'modal-discussion')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-discussion')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#7c6af7);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#128172;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Create Discussion</div>
+        <div style="font-size:12px;color:#8888aa">Writes CREATE_DISCUSSION to Canopy</div>
+      </div>
+    </div>
+    <label class="dharma-label">Title *</label>
+    <input class="dharma-input" id="disc-title" placeholder="e.g. Should we rewrite the backend?" style="margin-bottom:14px">
+    <label class="dharma-label">Body</label>
+    <textarea class="dharma-textarea" id="disc-body" rows="4" placeholder="Describe the decision or topic…" style="margin-bottom:16px"></textarea>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-discussion')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="disc-submit" onclick="submitDiscussion()">Open Discussion &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-release" style="display:none" onclick="closeOnOverlay(event,'modal-release')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-release')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#22d3a0,#38bdf8);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#128230;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Publish Release</div>
+        <div style="font-size:12px;color:#8888aa">Writes ADD_RELEASE to Canopy</div>
+      </div>
+    </div>
+    <label class="dharma-label">Version *</label>
+    <input class="dharma-input" id="rel-ver" placeholder="e.g. v1.0.0" style="margin-bottom:14px">
+    <label class="dharma-label">Summary</label>
+    <input class="dharma-input" id="rel-summary" placeholder="One-line description" style="margin-bottom:14px">
+    <label class="dharma-label">Release Notes</label>
+    <textarea class="dharma-textarea" id="rel-notes" rows="4" placeholder="What changed in this release?" style="margin-bottom:16px"></textarea>
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-release')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="rel-submit" onclick="submitRelease()">Publish Release &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-endorse" style="display:none" onclick="closeOnOverlay(event,'modal-endorse')">
+  <div class="modal-box">
+    <button onclick="closeModal('modal-endorse')" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#44445a;font-size:18px;line-height:1">&#10005;</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7c6af7,#f59e0b);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#10024;</div>
+      <div>
+        <div class="font-display" style="font-weight:700;font-size:18px">Endorse Contribution</div>
+        <div style="font-size:12px;color:#8888aa">Writes ENDORSE_CONTRIBUTION to Canopy</div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-bottom:14px">
+      <div class="dharma-label" style="margin-bottom:2px">Event</div>
+      <div style="font-size:13px;font-weight:600" id="endorse-event-title">—</div>
+    </div>
+    <label class="dharma-label">Endorsement Type</label>
+    <select class="dharma-select" id="endorse-type" style="margin-bottom:14px">
+      <option value="brilliant">&#10024; Brilliant</option>
+      <option value="helpful">&#128077; Helpful</option>
+      <option value="critical_fix">&#128293; Critical Fix</option>
+      <option value="excellent_design">&#127775; Excellent Design</option>
+      <option value="research">&#128218; Research</option>
+      <option value="mentorship">&#129351; Mentorship</option>
+    </select>
+    <label class="dharma-label">Note (optional)</label>
+    <input class="dharma-input" id="endorse-note" placeholder="Why are you endorsing this?" style="margin-bottom:16px">
+    <div style="display:flex;gap:10px">
+      <button class="btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('modal-endorse')">Cancel</button>
+      <button class="btn-primary" style="flex:2;justify-content:center" id="endorse-submit" onclick="submitEndorse()">Endorse &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+function genHash(){return Array.from({length:64},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('')}
+function genId(p){return(p||'id')+'_'+Math.random().toString(36).slice(2,9)}
+function shortAddr(a){if(!a)return'—';return a.slice(0,8)+'…'+a.slice(-4)}
+function shortHash(h){if(!h)return'—';return h.slice(0,10)+'…'}
+function esc(s){const d=document.createElement('div');d.textContent=String(s||'');return d.innerHTML}
+function fmtTime(ts){
+  if(!ts)return'—';
+  try{return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+  catch{return'—'}
+}
+function genAddr(seed){
+  let h=5381;
+  for(let i=0;i<seed.length;i++)h=((h<<5)+h+seed.charCodeAt(i))>>>0;
+  return'cnpy1'+h.toString(16).padStart(8,'0')+'0000000000000000000000000000';
+}
+
+const EVT_COLOR={idea:'#7c6af7',prototype:'#c084fc',research:'#38bdf8',design:'#c084fc',development:'#38bdf8',testing:'#f59e0b',deployment:'#22d3a0',funding:'#f59e0b',community:'#22d3a0',milestone:'#f59e0b',release:'#22d3a0',discussion:'#8888aa'};
+const EVT_EMOJI={idea:'💡',prototype:'🔬',research:'📚',design:'🎨',development:'⚙️',testing:'🧪',deployment:'🚀',funding:'💰',community:'👥',milestone:'🏆',release:'📦',discussion:'💬'};
+const CAT_BADGE={defi:'emerald',infrastructure:'sky',socialfi:'purple',nft:'amber',dao:'rose',tooling:'sky',research:'amber',other:'dim'};
+const TX_COLORS={1001:'#7c6af7',1002:'#22d3a0',1003:'#38bdf8',1004:'#22d3a0',1005:'#c084fc',1006:'#f59e0b',1007:'#22d3a0',1008:'#38bdf8',1009:'#22d3a0',1010:'#7c6af7',1011:'#38bdf8',1012:'#22d3a0'};
+const TX_NAMES={1001:'CREATE_PROJECT',1002:'JOIN_PROJECT',1003:'INVITE_CONTRIBUTOR',1004:'ACCEPT_INVITATION',1005:'ADD_TIMELINE_EVENT',1006:'CREATE_MILESTONE',1007:'COMPLETE_MILESTONE',1008:'LINK_GITHUB_COMMIT',1009:'ADD_RELEASE',1010:'ENDORSE_CONTRIBUTION',1011:'CREATE_DISCUSSION',1012:'RESOLVE_DISCUSSION'};
+
+const ALICE=genAddr('alice_dharma_seed');
+const BOB=genAddr('bob_dharma_seed');
+const CAROL=genAddr('carol_dharma_seed');
+
+const STATE={
+  wallet:{connected:false,address:null},
+  blockHeight:12,
+  currentProjectId:null,
+  liveInterval:null,
+  projects:{},
+  transactions:[],
+};
+
+function seedData(){
+  const p1={
+    id:'proj_dharma_001',name:'Dharma Protocol',
+    description:"The onchain memory layer for open collaboration. Every contribution, milestone, and discussion becomes a permanent part of the project's DNA on Canopy Network.",
+    category:'socialfi',repository_url:'https://github.com/dharma-protocol/dharma',
+    creator:ALICE,block_height:1,tx_hash:genHash(),
+    created_at:new Date(Date.now()-86400000*3).toISOString(),
+    contributors:[
+      {address:ALICE,role:'creator',joined_at:new Date(Date.now()-86400000*3).toISOString(),event_count:4,endorsements:2,tx_hash:genHash()},
+      {address:BOB,role:'contributor',joined_at:new Date(Date.now()-86400000*2).toISOString(),event_count:2,endorsements:1,tx_hash:genHash()},
+      {address:CAROL,role:'contributor',joined_at:new Date(Date.now()-86400000).toISOString(),event_count:1,endorsements:0,tx_hash:genHash()},
+    ],
+    timeline:[
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:ALICE,category:'idea',title:'Project Created',description:'Dharma Protocol was created on Canopy Network.',endorsements:[],timestamp:new Date(Date.now()-86400000*3).toISOString(),tx_hash:genHash(),block_height:1},
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:BOB,category:'community',title:'Bob Joined',description:'Excited to build the future of collaboration!',endorsements:[{id:genId('end'),type:'brilliant',endorser:CAROL,note:'Great addition!',tx_hash:genHash()}],timestamp:new Date(Date.now()-86400000*2).toISOString(),tx_hash:genHash(),block_height:3},
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:ALICE,category:'prototype',title:'Go Plugin Architecture Designed',description:'Core plugin with 12 custom tx types on Canopy Go Template. All transaction flows validated.',endorsements:[{id:genId('end'),type:'excellent_design',endorser:BOB,note:'Clean and elegant',tx_hash:genHash()}],timestamp:new Date(Date.now()-86400000*2+3600000).toISOString(),tx_hash:genHash(),block_height:4},
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:CAROL,category:'community',title:'Carol Joined',description:'Here for design and documentation.',endorsements:[],timestamp:new Date(Date.now()-86400000).toISOString(),tx_hash:genHash(),block_height:5},
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:BOB,category:'design',title:'React Design System Built',description:'Dark theme with TailwindCSS v4, animated timeline, contribution DNA graph with SVG network.',endorsements:[],timestamp:new Date(Date.now()-3600000*5).toISOString(),tx_hash:genHash(),block_height:7},
+      {id:genId('e'),project_id:'proj_dharma_001',contributor:ALICE,category:'deployment',title:'Deployed to Canopy Testnet',description:'All 12 transaction types live. RPC responding on port 50002. All features tested.',endorsements:[],timestamp:new Date(Date.now()-3600000*2).toISOString(),tx_hash:genHash(),block_height:9},
+    ],
+    milestones:[
+      {id:'ms_mvp',project_id:'proj_dharma_001',creator:ALICE,title:'MVP Launch on Canopy Testnet',description:'All 12 custom tx types functional and validated end-to-end.',completed:true,completer:ALICE,notes:'MVP is live. All 12 transaction types validated on testnet.',created_at:new Date(Date.now()-86400000*2).toISOString(),completed_at:new Date(Date.now()-3600000*8).toISOString(),tx_hash:genHash(),block_height:6},
+      {id:'ms_docs',project_id:'proj_dharma_001',creator:ALICE,title:'Write Full Documentation',description:'README, architecture diagrams, installation guide, API reference.',completed:false,created_at:new Date(Date.now()-86400000).toISOString(),tx_hash:genHash(),block_height:8},
+      {id:'ms_audit',project_id:'proj_dharma_001',creator:ALICE,title:'Security Audit',description:'Full audit of plugin transaction validation and state machine.',completed:false,created_at:new Date(Date.now()-3600000*6).toISOString(),tx_hash:genHash(),block_height:10},
+    ],
+    discussions:[
+      {id:'disc_001',project_id:'proj_dharma_001',creator:BOB,title:'Token-gated project creation?',body:'Should we require CNPY stake to create projects? Would prevent spam and incentivize quality contributions.',resolved:true,resolver:BOB,resolution:'Deferred to post-launch. Will revisit after main release with community input.',created_at:new Date(Date.now()-86400000).toISOString(),resolved_at:new Date(Date.now()-3600000*2).toISOString(),tx_hash:genHash()},
+    ],
+    releases:[
+      {id:'rel_v01',project_id:'proj_dharma_001',publisher:ALICE,version:'v0.1.0',summary:'Initial release on Canopy Network',release_notes:'- 12 custom transaction types (1001–1012)\n- JSON-RPC server on port 50002\n- React + TypeScript frontend\n- Blockchain explorer\n- Contribution DNA graph\n- Animated timeline',contributor_count:3,contributors:[ALICE,BOB,CAROL],published_at:new Date(Date.now()-3600000*2).toISOString(),tx_hash:genHash(),block_height:11},
+    ],
+  };
+  const p2={
+    id:'proj_civic_002',name:'CivicChain',
+    description:'Community governance and contribution tracking on Canopy Network. A complete DAO OS for Web3 communities with onchain voting.',
+    category:'dao',repository_url:'https://github.com/civicchain/core',
+    creator:BOB,block_height:2,tx_hash:genHash(),
+    created_at:new Date(Date.now()-86400000*5).toISOString(),
+    contributors:[
+      {address:BOB,role:'creator',joined_at:new Date(Date.now()-86400000*5).toISOString(),event_count:3,endorsements:1,tx_hash:genHash()},
+      {address:ALICE,role:'contributor',joined_at:new Date(Date.now()-86400000*4).toISOString(),event_count:1,endorsements:0,tx_hash:genHash()},
+    ],
+    timeline:[
+      {id:genId('e'),project_id:'proj_civic_002',contributor:BOB,category:'idea',title:'Project Created',description:'CivicChain was created on Canopy Network.',endorsements:[],timestamp:new Date(Date.now()-86400000*5).toISOString(),tx_hash:genHash(),block_height:2},
+      {id:genId('e'),project_id:'proj_civic_002',contributor:BOB,category:'development',title:'Python gRPC Plugin Completed',description:'Canopy plugin with Python/gRPC, protobuf tx types, FastAPI server with standalone mock mode.',endorsements:[],timestamp:new Date(Date.now()-86400000*3).toISOString(),tx_hash:genHash(),block_height:10},
+      {id:genId('e'),project_id:'proj_civic_002',contributor:ALICE,category:'community',title:'Alice Joined',description:'Contributing to governance module.',endorsements:[],timestamp:new Date(Date.now()-86400000*4).toISOString(),tx_hash:genHash(),block_height:6},
+    ],
+    milestones:[
+      {id:genId('ms'),project_id:'proj_civic_002',creator:BOB,title:'Launch DAO Voting Module',description:'Onchain governance with quadratic voting via custom Canopy tx types.',completed:false,created_at:new Date(Date.now()-86400000*4).toISOString(),tx_hash:genHash(),block_height:3},
+    ],
+    discussions:[
+      {id:genId('d'),project_id:'proj_civic_002',creator:ALICE,title:'Quadratic vs token-weighted voting?',body:'Quadratic voting is more democratic but complex to implement. Token-weighted is simpler but favors whales. What does the community prefer?',resolved:false,created_at:new Date(Date.now()-86400000*2).toISOString(),tx_hash:genHash()},
+    ],
+    releases:[],
+  };
+  STATE.projects[p1.id]=p1;
+  STATE.projects[p2.id]=p2;
+
+  const addTx=(type,sender,bh)=>{
+    STATE.transactions.push({hash:genHash(),tx_type:type,tx_type_name:TX_NAMES[type],sender,payload:{},block_height:bh,timestamp:new Date().toISOString(),fee:0});
+  };
+  addTx(1001,ALICE,1);addTx(1001,BOB,2);addTx(1002,BOB,3);addTx(1002,CAROL,5);
+  addTx(1005,ALICE,4);addTx(1005,BOB,7);addTx(1006,ALICE,8);addTx(1007,ALICE,9);
+  addTx(1011,BOB,10);addTx(1012,BOB,11);addTx(1009,ALICE,12);addTx(1002,ALICE,6);
+  STATE.transactions.reverse();
+}
+
+function simulateTx(type,payload,sender){
+  return new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+      try{
+        const txHash=genHash();
+        STATE.blockHeight++;
+        const ts=new Date().toISOString();
+        STATE.transactions.unshift({hash:txHash,tx_type:type,tx_type_name:TX_NAMES[type],sender,payload,block_height:STATE.blockHeight,timestamp:ts,fee:0});
+
+        if(type===1001){
+          const pid=genId('proj');
+          STATE.projects[pid]={
+            id:pid,name:payload.name,description:payload.description||'',
+            category:payload.category||'socialfi',repository_url:payload.repository_url||'',
+            creator:sender,block_height:STATE.blockHeight,tx_hash:txHash,created_at:ts,
+            contributors:[{address:sender,role:'creator',joined_at:ts,event_count:0,endorsements:0,tx_hash:txHash}],
+            timeline:[{id:genId('e'),project_id:pid,contributor:sender,category:'idea',title:'Project Created',description:(payload.name||'Project')+' was created on Dharma Protocol.',endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight}],
+            milestones:[],discussions:[],releases:[],
+          };
+          STATE.currentProjectId=pid;
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight,project_id:pid});
+        } else if(type===1002){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          if(p.contributors.some(c=>c.address===sender))throw new Error('You are already a contributor on this project');
+          p.contributors.push({address:sender,role:'contributor',joined_at:ts,event_count:0,endorsements:0,tx_hash:txHash});
+          p.timeline.push({id:genId('e'),project_id:p.id,contributor:sender,category:'community',title:'New Contributor Joined',description:payload.message||'',endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1005){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          p.timeline.push({id:genId('e'),project_id:p.id,contributor:sender,category:payload.category,title:payload.title,description:payload.description||'',endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          const c=p.contributors.find(c=>c.address===sender);
+          if(c)c.event_count++;
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1006){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          p.milestones.push({id:genId('ms'),project_id:p.id,creator:sender,title:payload.title,description:payload.description||'',completed:false,created_at:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1007){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          const m=p.milestones.find(m=>m.id===payload.milestone_id);
+          if(!m)throw new Error('Milestone not found');
+          m.completed=true;m.completer=sender;m.notes=payload.notes||'Completed!';m.completed_at=ts;
+          p.timeline.push({id:genId('e'),project_id:p.id,contributor:sender,category:'milestone',title:'Milestone Completed: '+m.title,description:m.notes,endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1009){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          p.releases.push({id:genId('rel'),project_id:p.id,publisher:sender,version:payload.version,summary:payload.summary||'',release_notes:payload.release_notes||'',contributor_count:p.contributors.length,contributors:p.contributors.map(c=>c.address),published_at:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          p.timeline.push({id:genId('e'),project_id:p.id,contributor:sender,category:'release',title:'Release '+payload.version+' Published',description:payload.summary||'',endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1010){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          const evt=p.timeline.find(e=>e.id===payload.event_id);
+          const endorse={id:genId('end'),type:payload.endorse_type,endorser:sender,recipient:payload.recipient,note:payload.note||'',tx_hash:txHash};
+          if(evt)evt.endorsements.push(endorse);
+          const rc=p.contributors.find(c=>c.address===payload.recipient);
+          if(rc)rc.endorsements++;
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1011){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          p.discussions.push({id:genId('disc'),project_id:p.id,creator:sender,title:payload.title,body:payload.body||'',resolved:false,created_at:ts,tx_hash:txHash});
+          p.timeline.push({id:genId('e'),project_id:p.id,contributor:sender,category:'discussion',title:'Discussion: '+payload.title,description:payload.body||'',endorsements:[],timestamp:ts,tx_hash:txHash,block_height:STATE.blockHeight});
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else if(type===1012){
+          const p=STATE.projects[payload.project_id];
+          if(!p)throw new Error('Project not found');
+          const d=p.discussions.find(d=>d.id===payload.discussion_id);
+          if(!d)throw new Error('Discussion not found');
+          d.resolved=true;d.resolver=sender;d.resolution=payload.resolution||'Resolved.';d.resolved_at=ts;
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        } else {
+          resolve({tx_hash:txHash,block_height:STATE.blockHeight});
+        }
+      }catch(err){reject(err);}
+    },600+Math.random()*500);
+  });
+}
+
+function doConnect(){
+  const input=document.getElementById('wallet-input');
+  const raw=input.value.trim();
+  const addr=raw||genAddr(Date.now().toString());
+  STATE.wallet={connected:true,address:addr};
+  try{localStorage.setItem('dharma_wallet',JSON.stringify(STATE.wallet));}catch(e){}
+  input.value='';
+  closeModal('wallet-modal');
+  updateWalletUI();
+  toast('✓','Wallet connected!',null,false);
+  if(currentPage==='dashboard')renderDashboard();
+  if(currentPage==='projects')renderProjects();
+  if(currentPage==='project'&&STATE.currentProjectId)renderProjectDetail(STATE.currentProjectId);
+}
+function disconnectWallet(){
+  STATE.wallet={connected:false,address:null};
+  try{localStorage.removeItem('dharma_wallet');}catch(e){}
+  document.getElementById('wallet-menu').style.display='none';
+  updateWalletUI();
+  if(currentPage==='dashboard')renderDashboard();
+  if(currentPage==='projects')renderProjects();
+  if(currentPage==='project'&&STATE.currentProjectId)renderProjectDetail(STATE.currentProjectId);
+}
+function toggleWalletMenu(){
+  const m=document.getElementById('wallet-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('wallet-menu');
+  const btn=document.getElementById('wallet-btn');
+  if(menu&&btn&&!menu.contains(e.target)&&!btn.contains(e.target))menu.style.display='none';
+});
+function updateWalletUI(){
+  const conn=STATE.wallet.connected;
+  document.getElementById('connect-btn').style.display=conn?'none':'flex';
+  document.getElementById('wallet-connected-ui').style.display=conn?'block':'none';
+  if(conn){
+    document.getElementById('wallet-addr-short').textContent=shortAddr(STATE.wallet.address);
+    document.getElementById('wallet-addr-full').textContent=STATE.wallet.address;
+  }
+  const wb=document.getElementById('dash-wallet-status');
+  if(wb){
+    if(conn){
+      wb.innerHTML='<div style="display:flex;align-items:center;gap:8px"><div style="width:6px;height:6px;border-radius:50%;background:#22d3a0"></div><span class="font-mono" style="font-size:12px">'+esc(STATE.wallet.address)+'</span></div>';
+    }else{
+      wb.textContent='Connect wallet to submit transactions';
+    }
+  }
+  const nb=document.getElementById('dash-new-btn');
+  const pb=document.getElementById('projects-new-btn');
+  const cta=document.getElementById('dash-wallet-cta');
+  if(nb)nb.style.display=conn?'flex':'none';
+  if(pb)pb.style.display=conn?'flex':'none';
+  if(cta)cta.style.display=conn?'none':'block';
+  const cpCreator=document.getElementById('cp-creator');
+  if(cpCreator)cpCreator.textContent=conn?(STATE.wallet.address||'—'):'—';
+}
+
+let currentPage='landing';
+function goPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const el=document.getElementById('page-'+page);
+  if(el)el.classList.add('active');
+  const nav=document.getElementById('nav-'+page);
+  if(nav)nav.classList.add('active');
+  currentPage=page;
+  window.scrollTo(0,0);
+  if(page==='dashboard')renderDashboard();
+  if(page==='projects')renderProjects();
+  if(page==='explorer')renderExplorer();
+  if(page==='project'&&STATE.currentProjectId)renderProjectDetail(STATE.currentProjectId);
+}
+function openProject(id){
+  STATE.currentProjectId=id;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="timeline"]').classList.add('active');
+  document.getElementById('tab-timeline').classList.add('active');
+  goPage('project');
+}
+
+function openModal(id){
+  document.getElementById(id).style.display='flex';
+  document.body.style.overflow='hidden';
+  if(id==='modal-create-project'){
+    const c=document.getElementById('cp-creator');
+    if(c)c.textContent=STATE.wallet.address||'—';
+  }
+}
+function closeModal(id){document.getElementById(id).style.display='none';document.body.style.overflow='';}
+function closeOnOverlay(e,id){if(e.target===e.currentTarget)closeModal(id);}
+
+function toast(icon,msg,txHash,isErr){
+  const wrap=document.getElementById('toast-wrap');
+  const id='t'+Date.now()+Math.floor(Math.random()*1000);
+  const div=document.createElement('div');
+  div.className='toast'+(isErr?' toast-error':'');
+  div.id=id;
+  div.innerHTML='<span class="toast-icon">'+esc(icon)+'</span><div class="toast-text"><div class="toast-msg">'+esc(msg)+'</div>'+(txHash?'<div class="toast-hash">tx: '+esc(txHash.slice(0,24))+'…</div>':'')+'</div><button class="toast-close" onclick="document.getElementById(\''+id+'\').remove()">&#10005;</button>';
+  wrap.appendChild(div);
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.remove();},5000);
+}
+
+function setLoading(btnId,on,label){
+  const btn=document.getElementById(btnId);
+  if(!btn)return;
+  if(on){
+    btn.disabled=true;
+    btn.innerHTML='<span class="spin" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%"></span> Submitting…';
+  }else{
+    btn.disabled=false;
+    btn.textContent=label||'Submit';
+  }
+}
+function requireWallet(){
+  if(!STATE.wallet.connected){toast('✗','Please connect your wallet first',null,true);return false;}
+  return true;
+}
+
+function submitCreateProject(){
+  if(!requireWallet())return;
+  const name=document.getElementById('cp-name').value.trim();
+  if(!name){toast('✗','Project name is required',null,true);return;}
+  const payload={name,description:document.getElementById('cp-desc').value.trim(),category:document.getElementById('cp-cat').value,repository_url:document.getElementById('cp-repo').value.trim()};
+  setLoading('cp-submit',true);
+  simulateTx(1001,payload,STATE.wallet.address).then(r=>{
+    setLoading('cp-submit',false,'Create Project →');
+    ['cp-name','cp-desc','cp-repo'].forEach(id=>document.getElementById(id).value='');
+    closeModal('modal-create-project');
+    toast('✓','Project created!',r.tx_hash,false);
+    openProject(STATE.currentProjectId);
+  }).catch(e=>{setLoading('cp-submit',false,'Create Project →');toast('✗',e.message,null,true);});
+}
+
+function submitJoin(){
+  if(!requireWallet())return;
+  const pid=STATE.currentProjectId;
+  if(!pid)return;
+  setLoading('join-submit',true);
+  simulateTx(1002,{project_id:pid,message:document.getElementById('join-msg').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('join-submit',false,'Join Project →');
+    document.getElementById('join-msg').value='';
+    closeModal('modal-join');
+    toast('✓','Joined project!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>{setLoading('join-submit',false,'Join Project →');toast('✗',e.message,null,true);});
+}
+
+function submitAddEvent(){
+  if(!requireWallet())return;
+  const title=document.getElementById('ev-title').value.trim();
+  if(!title){toast('✗','Event title is required',null,true);return;}
+  const pid=STATE.currentProjectId;
+  setLoading('ev-submit',true);
+  simulateTx(1005,{project_id:pid,category:document.getElementById('ev-cat').value,title,description:document.getElementById('ev-desc').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('ev-submit',false,'Add Event →');
+    document.getElementById('ev-title').value='';document.getElementById('ev-desc').value='';
+    closeModal('modal-add-event');
+    toast('✓','Timeline event added!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>{setLoading('ev-submit',false,'Add Event →');toast('✗',e.message,null,true);});
+}
+
+function submitMilestone(){
+  if(!requireWallet())return;
+  const title=document.getElementById('ms-title').value.trim();
+  if(!title){toast('✗','Milestone title is required',null,true);return;}
+  const pid=STATE.currentProjectId;
+  setLoading('ms-submit',true);
+  simulateTx(1006,{project_id:pid,title,description:document.getElementById('ms-desc').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('ms-submit',false,'Create Milestone →');
+    document.getElementById('ms-title').value='';document.getElementById('ms-desc').value='';
+    closeModal('modal-milestone');
+    toast('✓','Milestone created!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>{setLoading('ms-submit',false,'Create Milestone →');toast('✗',e.message,null,true);});
+}
+
+function completeMilestone(pid,mid){
+  if(!requireWallet())return;
+  simulateTx(1007,{project_id:pid,milestone_id:mid,notes:'Completed!'},STATE.wallet.address).then(r=>{
+    toast('✓','Milestone completed!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>toast('✗',e.message,null,true));
+}
+
+function submitDiscussion(){
+  if(!requireWallet())return;
+  const title=document.getElementById('disc-title').value.trim();
+  if(!title){toast('✗','Discussion title is required',null,true);return;}
+  const pid=STATE.currentProjectId;
+  setLoading('disc-submit',true);
+  simulateTx(1011,{project_id:pid,title,body:document.getElementById('disc-body').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('disc-submit',false,'Open Discussion →');
+    document.getElementById('disc-title').value='';document.getElementById('disc-body').value='';
+    closeModal('modal-discussion');
+    toast('✓','Discussion opened!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>{setLoading('disc-submit',false,'Open Discussion →');toast('✗',e.message,null,true);});
+}
+
+function resolveDiscussion(pid,did){
+  if(!requireWallet())return;
+  const resolution=prompt('Resolution summary:','Resolved by creator.');
+  if(resolution===null)return;
+  simulateTx(1012,{project_id:pid,discussion_id:did,resolution},STATE.wallet.address).then(r=>{
+    toast('✓','Discussion resolved!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>toast('✗',e.message,null,true));
+}
+
+function submitRelease(){
+  if(!requireWallet())return;
+  const ver=document.getElementById('rel-ver').value.trim();
+  if(!ver){toast('✗','Version is required',null,true);return;}
+  const pid=STATE.currentProjectId;
+  setLoading('rel-submit',true);
+  simulateTx(1009,{project_id:pid,version:ver,summary:document.getElementById('rel-summary').value.trim(),release_notes:document.getElementById('rel-notes').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('rel-submit',false,'Publish Release →');
+    ['rel-ver','rel-summary','rel-notes'].forEach(id=>document.getElementById(id).value='');
+    closeModal('modal-release');
+    toast('✓','Release '+ver+' published!',r.tx_hash,false);
+    renderProjectDetail(pid);
+  }).catch(e=>{setLoading('rel-submit',false,'Publish Release →');toast('✗',e.message,null,true);});
+}
+
+let pendingEndorseEventId=null;
+let pendingEndorseRecipient=null;
+let pendingEndorsePid=null;
+function openEndorseModal(pid,eventId,recipient,eventTitle){
+  pendingEndorseEventId=eventId;pendingEndorseRecipient=recipient;pendingEndorsePid=pid;
+  document.getElementById('endorse-event-title').textContent=eventTitle;
+  openModal('modal-endorse');
+}
+function submitEndorse(){
+  if(!requireWallet())return;
+  setLoading('endorse-submit',true);
+  simulateTx(1010,{project_id:pendingEndorsePid,event_id:pendingEndorseEventId,recipient:pendingEndorseRecipient,endorse_type:document.getElementById('endorse-type').value,note:document.getElementById('endorse-note').value.trim()},STATE.wallet.address).then(r=>{
+    setLoading('endorse-submit',false,'Endorse →');
+    document.getElementById('endorse-note').value='';
+    closeModal('modal-endorse');
+    toast('✓','Contribution endorsed!',r.tx_hash,false);
+    renderProjectDetail(pendingEndorsePid);
+  }).catch(e=>{setLoading('endorse-submit',false,'Endorse →');toast('✗',e.message,null,true);});
+}
+
+function switchTab(btn){
+  const key=btn.getAttribute('data-tab');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+key).classList.add('active');
+}
+
+function renderDashboard(){
+  const projects=Object.values(STATE.projects);
+  const allContribs=new Set(projects.flatMap(p=>p.contributors.map(c=>c.address)));
+  document.getElementById('stat-projects').textContent=projects.length;
+  document.getElementById('stat-txs').textContent=STATE.transactions.length;
+  document.getElementById('stat-contributors').textContent=allContribs.size;
+  document.getElementById('stat-blocks').textContent=STATE.blockHeight;
+
+  const dp=document.getElementById('dash-projects');
+  if(projects.length===0){
+    dp.innerHTML='<div class="dharma-card" style="padding:32px;text-align:center;font-size:13px;color:#44445a">No projects yet. Create your first project to get started.</div>';
+  }else{
+    dp.innerHTML=projects.slice(0,6).map(p=>'<div class="dharma-card" style="padding:16px;cursor:pointer;transition:border-color .15s" onclick="openProject(\''+esc(p.id)+'\')" onmouseover="this.style.borderColor=\'#7c6af750\'" onmouseout="this.style.borderColor=\'#1e1e30\'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div style="font-weight:600;font-size:14px;color:#e8e8f4">'+esc(p.name)+'</div><span class="badge badge-'+esc(CAT_BADGE[p.category]||'dim')+'">'+esc(p.category)+'</span></div>'+
+      '<div style="font-size:12px;color:#8888aa;margin-bottom:10px;line-height:1.5">'+esc((p.description||'').slice(0,90))+((p.description||'').length>90?'…':'')+'</div>'+
+      '<div style="display:flex;gap:16px;font-size:11px;color:#44445a"><span>'+p.contributors.length+' contributors</span><span>'+p.timeline.length+' events</span><span>'+p.milestones.filter(m=>m.completed).length+'/'+p.milestones.length+' milestones</span></div></div>'
+    ).join('');
+  }
+
+  const da=document.getElementById('dash-activity');
+  if(STATE.transactions.length===0){
+    da.innerHTML='<div class="dharma-card" style="padding:32px;text-align:center;font-size:13px;color:#44445a">No transactions yet.</div>';
+  }else{
+    da.innerHTML=STATE.transactions.slice(0,8).map(tx=>'<div class="dharma-card" style="padding:12px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="badge badge-purple" style="font-size:10px">'+esc(tx.tx_type_name)+'</span><span style="font-size:10px;color:#44445a">block #'+tx.block_height+'</span></div>'+
+      '<div style="font-size:11px;color:#8888aa">'+shortAddr(tx.sender)+'</div><div class="hash-display">'+shortHash(tx.hash)+'</div></div>'
+    ).join('');
+  }
+}
+
+function renderProjects(){
+  const search=(document.getElementById('projects-search')||{value:''}).value.toLowerCase();
+  const cat=(document.getElementById('projects-cat')||{value:''}).value;
+  const projects=Object.values(STATE.projects).filter(p=>{
+    if(cat&&p.category!==cat)return false;
+    if(search&&!p.name.toLowerCase().includes(search)&&!(p.description||'').toLowerCase().includes(search))return false;
+    return true;
+  });
+  const countEl=document.getElementById('projects-count');
+  if(countEl)countEl.textContent=projects.length+' project'+(projects.length!==1?'s':'')+' on Canopy';
+  const grid=document.getElementById('projects-grid');
+  if(!grid)return;
+  if(projects.length===0){
+    grid.innerHTML='<div class="dharma-card empty-state" style="grid-column:1/-1"><div class="empty-icon">📁</div><div class="empty-title">No projects found</div><div class="empty-desc">'+(STATE.wallet.connected?'Create your first project to start building permanent onchain history.':'Connect your wallet and create a project to get started.')+'</div>'+(STATE.wallet.connected?'<button class="btn-primary" onclick="openModal(\'modal-create-project\')">+ New Project</button>':'')+'</div>';
+    return;
+  }
+  grid.innerHTML=projects.map(p=>{
+    const done=p.milestones.filter(m=>m.completed).length,total=p.milestones.length;
+    const pct=total>0?Math.round((done/total)*100):0;
+    return '<div class="dharma-card" style="padding:20px;cursor:pointer;transition:all .15s" onclick="openProject(\''+esc(p.id)+'\')" onmouseover="this.style.borderColor=\'#7c6af750\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#1e1e30\';this.style.transform=\'translateY(0)\'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="font-weight:700;font-size:14px;color:#e8e8f4;margin-right:10px">'+esc(p.name)+'</div><span class="badge badge-'+esc(CAT_BADGE[p.category]||'dim')+'">'+esc(p.category)+'</span></div>'+
+      '<div style="font-size:12px;color:#8888aa;line-height:1.5;margin-bottom:12px;min-height:36px">'+esc((p.description||'').slice(0,90))+((p.description||'').length>90?'…':'')+'</div>'+
+      (total>0?'<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:10px;color:#44445a;margin-bottom:4px"><span>Milestones</span><span>'+done+'/'+total+'</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>':'')+
+      '<div style="display:flex;gap:14px;font-size:10px;color:#44445a;border-top:1px solid #1e1e30;padding-top:10px"><span>👥 '+p.contributors.length+'</span><span>⬡ '+p.timeline.length+' events</span><span style="margin-left:auto;font-family:\'JetBrains Mono\',monospace">'+shortAddr(p.creator)+'</span></div></div>';
+  }).join('');
+}
+
+function renderProjectDetail(id){
+  const p=STATE.projects[id];
+  if(!p)return;
+  STATE.currentProjectId=id;
+  const conn=STATE.wallet.connected,addr=STATE.wallet.address;
+  const isContrib=p.contributors.some(c=>c.address===addr);
+  const isCreator=p.creator===addr;
+  const done=p.milestones.filter(m=>m.completed).length,total=p.milestones.length;
+
+  const header=document.getElementById('project-header');
+  header.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">'+
+    '<div style="flex:1;margin-right:20px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap"><h1 class="font-display" style="font-size:24px;font-weight:700">'+esc(p.name)+'</h1><span class="badge badge-'+esc(CAT_BADGE[p.category]||'dim')+'">'+esc(p.category)+'</span></div>'+
+    '<p style="font-size:13px;color:#8888aa;line-height:1.6;margin-bottom:12px">'+esc(p.description||'')+'</p>'+
+    '<div style="display:flex;gap:20px;font-size:11px;color:#44445a;flex-wrap:wrap"><span>👥 '+p.contributors.length+' contributors</span><span>⬡ '+p.timeline.length+' events</span><span>📅 '+fmtTime(p.created_at)+'</span>'+(p.repository_url?'<a href="'+esc(p.repository_url)+'" target="_blank" rel="noopener" style="color:#7c6af7;text-decoration:none">⎋ Repository</a>':'')+'</div></div>'+
+    '<div style="display:flex;flex-direction:column;gap:7px;flex-shrink:0">'+
+    (conn&&!isContrib&&!isCreator?'<button class="btn-primary" style="font-size:12px;padding:7px 13px" onclick="openJoinModal()">+ Join Project</button>':'')+
+    (conn&&(isContrib||isCreator)?'<button class="btn-secondary" style="font-size:12px;padding:6px 12px" onclick="openModal(\'modal-add-event\')">⏱ Add Event</button>':'')+
+    (conn&&isCreator?'<button class="btn-secondary" style="font-size:12px;padding:6px 12px" onclick="openModal(\'modal-milestone\')">🎯 Milestone</button><button class="btn-secondary" style="font-size:12px;padding:6px 12px" onclick="openModal(\'modal-discussion\')">💬 Discussion</button><button class="btn-secondary" style="font-size:12px;padding:6px 12px" onclick="openModal(\'modal-release\')">📦 Release</button>':'')+
+    '</div></div>'+
+    '<div style="display:flex;gap:20px;padding-top:14px;border-top:1px solid #1e1e30;font-size:10px;flex-wrap:wrap"><span style="color:#44445a">Creator: <span class="font-mono" style="color:#9d8fff">'+shortAddr(p.creator)+'</span></span><span style="color:#44445a">Block: <span class="font-mono" style="color:#8888aa">#'+p.block_height+'</span></span><span class="hash-display">'+shortHash(p.tx_hash)+'</span></div>';
+
+  document.getElementById('tc-timeline').textContent=p.timeline.length;
+  document.getElementById('tc-milestones').textContent=p.milestones.length;
+  document.getElementById('tc-discussions').textContent=p.discussions.length;
+  document.getElementById('tc-releases').textContent=p.releases.length;
+  document.getElementById('tc-contributors').textContent=p.contributors.length;
+
+  const tl=document.getElementById('tab-timeline');
+  if(!p.timeline.length){
+    tl.innerHTML=emptyState('⏱','No timeline events',"Be the first to add an event to this project's permanent history.",conn&&(isContrib||isCreator)?'<button class="btn-primary" onclick="openModal(\'modal-add-event\')">+ Add Event</button>':'');
+  }else{
+    tl.innerHTML='<div style="position:relative"><div class="timeline-line"></div>'+[...p.timeline].reverse().map((evt,i)=>{
+      const col=EVT_COLOR[evt.category]||'#7c6af7';
+      const emoji=EVT_EMOJI[evt.category]||'📌';
+      return '<div class="tl-item" style="animation-delay:'+(i*0.04)+'s">'+
+        '<div class="tl-dot-col"><div class="tl-dot" style="background:'+col+';box-shadow:0 0 10px '+col+'60;border-color:#13131f"></div></div>'+
+        '<div class="dharma-card tl-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px"><div>'+
+        '<div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap"><span>'+emoji+'</span><span style="font-weight:600;font-size:13px;color:#e8e8f4">'+esc(evt.title)+'</span><span style="font-size:9px;padding:2px 7px;border-radius:100px;background:'+col+'20;color:'+col+';font-weight:700">'+esc(evt.category)+'</span></div>'+
+        (evt.description?'<div style="font-size:12px;color:#8888aa;line-height:1.5">'+esc(evt.description)+'</div>':'')+'</div>'+
+        '<div style="font-size:10px;color:#44445a;white-space:nowrap;margin-left:12px;flex-shrink:0">'+fmtTime(evt.timestamp)+'</div></div>'+
+        '<div style="display:flex;gap:14px;font-size:10px;color:#44445a;border-top:1px solid #1e1e3040;padding-top:8px;margin-top:6px;align-items:center"><span class="font-mono">'+shortAddr(evt.contributor)+'</span><span>block #'+evt.block_height+'</span><span class="hash-display" style="margin-left:auto">'+shortHash(evt.tx_hash)+'</span>'+
+        (conn&&isContrib?'<button class="btn-ghost" style="font-size:10px;padding:3px 8px" onclick="openEndorseModal(\''+esc(p.id)+'\',\''+esc(evt.id)+'\',\''+esc(evt.contributor)+'\','+JSON.stringify(esc(evt.title))+')">✦ Endorse</button>':'')+
+        '</div>'+
+        (evt.endorsements&&evt.endorsements.length?'<div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap">'+evt.endorsements.map(e=>'<span style="font-size:9px;padding:2px 7px;border-radius:100px;background:#7c6af720;color:#9d8fff;font-weight:700">✦ '+esc(e.type.replace(/_/g,' '))+'</span>').join('')+'</div>':'')+
+        '</div></div>';
+    }).join('')+'</div>';
+    setTimeout(()=>tl.querySelectorAll('.tl-item').forEach(el=>{el.style.opacity='1';}),50);
+  }
+
+  const msEl=document.getElementById('tab-milestones');
+  if(!p.milestones.length){
+    msEl.innerHTML=emptyState('🎯','No milestones','Create milestones to track project progress on the blockchain.',conn&&isCreator?'<button class="btn-primary" onclick="openModal(\'modal-milestone\')">🎯 Create Milestone</button>':'');
+  }else{
+    const dpct=total>0?Math.round((done/total)*100):0;
+    msEl.innerHTML='<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#44445a;margin-bottom:5px"><span>'+done+'/'+total+' completed</span><span>'+dpct+'%</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+dpct+'%"></div></div></div><div class="col-gap">'+
+    p.milestones.map(m=>'<div class="dharma-card" style="padding:16px"><div style="display:flex;align-items:flex-start;gap:12px"><div style="margin-top:1px;font-size:18px;flex-shrink:0">'+(m.completed?'✅':'⭕')+'</div><div style="flex:1">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div style="font-weight:600;font-size:13px;color:'+(m.completed?'#44445a':'#e8e8f4')+';text-decoration:'+(m.completed?'line-through':'none')+'">'+esc(m.title)+'</div>'+(m.completed?'<span class="badge badge-emerald" style="font-size:9px">DONE</span>':'')+'</div>'+
+      (m.description?'<div style="font-size:12px;color:#8888aa;margin-bottom:6px">'+esc(m.description)+'</div>':'')+
+      (m.notes&&m.completed?'<div style="font-size:11px;color:#22d3a0;margin-bottom:6px">'+esc(m.notes)+'</div>':'')+
+      '<div style="font-size:10px;color:#44445a">Created '+fmtTime(m.created_at)+(m.completed_at?' · Completed '+fmtTime(m.completed_at):'')+'</div></div>'+
+      (!m.completed&&conn&&isCreator?'<button class="btn-secondary" style="font-size:11px;padding:5px 11px;flex-shrink:0" onclick="completeMilestone(\''+esc(p.id)+'\',\''+esc(m.id)+'\')">✓ Complete</button>':'')+
+      '</div></div>').join('')+'</div>';
+  }
+
+  const discEl=document.getElementById('tab-discussions');
+  if(!p.discussions.length){
+    discEl.innerHTML=emptyState('💬','No discussions','Start an onchain discussion about a decision or direction.',conn&&isCreator?'<button class="btn-primary" onclick="openModal(\'modal-discussion\')">💬 Start Discussion</button>':'');
+  }else{
+    discEl.innerHTML='<div class="col-gap">'+p.discussions.map(d=>'<div class="dharma-card" style="padding:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="flex:1;margin-right:14px">'+
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap"><span>'+(d.resolved?'✅':'💬')+'</span><span style="font-weight:600;font-size:13px;color:#e8e8f4">'+esc(d.title)+'</span><span style="font-size:9px;background:'+(d.resolved?'#22d3a020':'#38bdf820')+';color:'+(d.resolved?'#22d3a0':'#38bdf8')+';padding:2px 8px;border-radius:100px;font-weight:700">'+(d.resolved?'RESOLVED':'OPEN')+'</span></div>'+
+      (d.body?'<div style="font-size:12px;color:#8888aa;line-height:1.5">'+esc(d.body)+'</div>':'')+'</div>'+
+      (!d.resolved&&conn&&isCreator?'<button class="btn-secondary" style="font-size:11px;padding:5px 11px;flex-shrink:0" onclick="resolveDiscussion(\''+esc(p.id)+'\',\''+esc(d.id)+'\')">Resolve</button>':'')+
+      '</div>'+
+      (d.resolved&&d.resolution?'<div style="margin-top:8px;padding:8px 12px;background:#22d3a010;border:1px solid #22d3a030;border-radius:7px;font-size:11px;color:#22d3a0">✓ '+esc(d.resolution)+'</div>':'')+
+      '<div style="font-size:10px;color:#44445a;margin-top:10px;padding-top:8px;border-top:1px solid #1e1e3040"><span class="font-mono">'+shortAddr(d.creator)+'</span> · '+fmtTime(d.created_at)+'</div></div>').join('')+'</div>';
+  }
+
+  const relEl=document.getElementById('tab-releases');
+  if(!p.releases.length){
+    relEl.innerHTML=emptyState('📦','No releases','Publish releases to record project versions permanently on Canopy.',conn&&isCreator?'<button class="btn-primary" onclick="openModal(\'modal-release\')">📦 Publish Release</button>':'');
+  }else{
+    relEl.innerHTML='<div class="col-gap">'+[...p.releases].reverse().map(r=>'<div class="dharma-card" style="padding:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span class="font-display" style="font-weight:700;font-size:18px;color:#22d3a0">'+esc(r.version)+'</span><span style="font-size:12px;color:#8888aa">'+esc(r.summary)+'</span></div>'+
+      '<pre style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#8888aa;white-space:pre-wrap;line-height:1.6;margin:0 0 10px">'+esc(r.release_notes)+'</pre>'+
+      '<div style="display:flex;gap:14px;font-size:10px;color:#44445a;border-top:1px solid #1e1e3040;padding-top:9px"><span>👥 '+r.contributor_count+' contributors</span><span>'+fmtTime(r.published_at)+'</span><span class="hash-display" style="margin-left:auto">'+shortHash(r.tx_hash)+'</span></div></div>').join('')+'</div>';
+  }
+
+  const contribEl=document.getElementById('tab-contributors');
+  contribEl.innerHTML='<div class="contrib-grid">'+p.contributors.map(c=>'<div class="dharma-card" style="padding:15px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'+
+    '<div style="width:34px;height:34px;border-radius:50%;background:'+(c.role==='creator'?'linear-gradient(135deg,#7c6af7,#c084fc)':'linear-gradient(135deg,#22d3a0,#38bdf8)')+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">'+esc(c.address.slice(5,6).toUpperCase())+'</div>'+
+    '<div><div class="font-mono" style="color:#9d8fff;font-size:11px">'+shortAddr(c.address)+'</div><div style="font-size:10px;color:#44445a;margin-top:1px">'+esc(c.role)+'</div></div></div>'+
+    '<div style="display:flex;gap:14px;font-size:10px;color:#44445a"><span>⚡ '+(c.event_count||0)+' events</span><span>✦ '+(c.endorsements||0)+' endorsements</span></div>'+
+    '<div style="font-size:10px;color:#2a2a40;margin-top:5px">Joined '+fmtTime(c.joined_at)+'</div></div>').join('')+'</div>';
+
+  const age=Math.max(0,Math.floor((Date.now()-new Date(p.created_at).getTime())/(1000*60*60*24)));
+  const openDiscs=p.discussions.filter(d=>!d.resolved).length;
+  const latestRel=p.releases.slice(-1)[0];
+  const dnaEl=document.getElementById('tab-dna');
+  const dnaStats=[
+    ['Project Age',age+' day'+(age!==1?'s':''),'#7c6af7'],
+    ['Contributors',p.contributors.length,'#22d3a0'],
+    ['Timeline Events',p.timeline.length,'#c084fc'],
+    ['Milestones',done+'/'+total,'#f59e0b'],
+    ['Open Discussions',openDiscs,'#38bdf8'],
+    ['Total Releases',p.releases.length,'#22d3a0'],
+    ['Latest Release',latestRel?latestRel.version:'None','#22d3a0'],
+    ['Block Height','#'+p.block_height,'#44445a'],
+  ];
+  const cx=160,cy=140,r=95;
+  const svgNodes=p.contributors.slice(0,8).map((c,i)=>{
+    const angle=(i/Math.min(p.contributors.length,8))*Math.PI*2-Math.PI/2;
+    const x=cx+Math.cos(angle)*r,y=cy+Math.sin(angle)*r;
+    const col=c.role==='creator'?'#7c6af7':c.role==='reviewer'?'#c084fc':c.role==='designer'?'#38bdf8':'#22d3a0';
+    return '<line x1="'+cx.toFixed(1)+'" y1="'+cy.toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+col+'" stroke-width=".7" stroke-opacity=".3" stroke-dasharray="3,4"/>'+
+    '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="19" fill="'+col+'15" stroke="'+col+'60" stroke-width="1.2"/>'+
+    '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="12" fill="'+col+'30"/>'+
+    '<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" fill="'+col+'" font-size="6.5" font-weight="700" font-family="Space Grotesk,sans-serif">'+esc(c.role.slice(0,4).toUpperCase())+'</text>'+
+    '<text x="'+x.toFixed(1)+'" y="'+(y+25).toFixed(1)+'" text-anchor="middle" fill="#8888aa" font-size="6" font-family="JetBrains Mono,monospace">'+shortAddr(c.address).slice(0,9)+'</text>'+
+    (c.event_count>0?'<circle cx="'+(x+12).toFixed(1)+'" cy="'+(y-12).toFixed(1)+'" r="7" fill="'+col+'"/><text x="'+(x+12).toFixed(1)+'" y="'+(y-12).toFixed(1)+'" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="6" font-weight="700">'+c.event_count+'</text>':'');
+  }).join('');
+  dnaEl.innerHTML='<div class="dna-grid"><div><div class="font-display" style="font-size:15px;font-weight:600;margin-bottom:14px">Project DNA</div>'+
+    dnaStats.map(([k,v,col])=>'<div class="dna-stat-row"><span class="dna-stat-key">'+esc(k)+'</span><span style="font-weight:700;color:'+col+';font-size:12px">'+esc(String(v))+'</span></div>').join('')+
+    '<div class="info-box" style="margin-top:7px"><div class="dharma-label" style="margin-bottom:3px">Origin Transaction</div><div class="font-mono" style="font-size:10px;color:#7c6af7;word-break:break-all">'+esc(p.tx_hash)+'</div></div></div>'+
+    '<div style="background:#0a0a12;border:1px solid #1e1e30;border-radius:12px;padding:18px"><div style="font-size:10px;color:#44445a;font-weight:600;letter-spacing:.08em;margin-bottom:12px">CONTRIBUTION NETWORK</div>'+
+    '<svg width="100%" viewBox="0 0 320 280" style="display:block"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#1e1e30" stroke-width=".5" stroke-dasharray="3,6"/>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="32" fill="#7c6af718" stroke="#7c6af750" stroke-width="1.5"/><circle cx="'+cx+'" cy="'+cy+'" r="21" fill="#7c6af730"/>'+
+    '<text x="'+cx+'" y="'+(cy-3)+'" text-anchor="middle" fill="#9d8fff" font-size="8" font-weight="700" font-family="Space Grotesk,sans-serif">'+esc(p.name.slice(0,8))+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+9)+'" text-anchor="middle" fill="#7c6af7" font-size="6" font-family="JetBrains Mono,monospace">PROJECT</text>'+svgNodes+'</svg>'+
+    '<div class="dna-legend">'+[['creator','#7c6af7'],['contributor','#22d3a0'],['reviewer','#c084fc'],['designer','#38bdf8']].map(([role,col])=>'<div style="display:flex;align-items:center;gap:5px;font-size:10px;color:#8888aa"><div class="legend-dot" style="background:'+col+'"></div>'+role+'</div>').join('')+'</div></div></div>';
+}
+
+function openJoinModal(){
+  const p=STATE.projects[STATE.currentProjectId];
+  if(!p)return;
+  document.getElementById('join-project-name').textContent=p.name;
+  openModal('modal-join');
+}
+function emptyState(icon,title,desc,actionHtml){
+  return '<div class="dharma-card empty-state"><div class="empty-icon">'+icon+'</div><div class="empty-title">'+esc(title)+'</div><div class="empty-desc">'+esc(desc)+'</div>'+(actionHtml||'')+'</div>';
+}
+
+function renderExplorer(){
+  const projects=Object.values(STATE.projects);
+  const allC=new Set(projects.flatMap(p=>p.contributors.map(c=>c.address)));
+  document.getElementById('exp-blocks').textContent=STATE.blockHeight;
+  document.getElementById('exp-txs').textContent=STATE.transactions.length;
+  document.getElementById('exp-projects').textContent=projects.length;
+  document.getElementById('exp-contribs').textContent=allC.size;
+
+  const search=(document.getElementById('exp-search')||{value:''}).value.toLowerCase();
+  const filter=(document.getElementById('exp-filter')||{value:''}).value;
+  const txs=STATE.transactions.filter(tx=>{
+    if(filter&&tx.tx_type!==Number(filter))return false;
+    if(search&&!tx.hash.includes(search)&&!tx.sender.toLowerCase().includes(search)&&!tx.tx_type_name.toLowerCase().includes(search))return false;
+    return true;
+  });
+  document.getElementById('exp-count').textContent=txs.length+' of '+STATE.transactions.length+' transactions';
+  const table=document.getElementById('exp-table');
+  if(!txs.length){
+    table.innerHTML='<div style="padding:48px;text-align:center;color:#44445a;font-size:13px">No transactions match your filter.</div>';
+    return;
+  }
+  table.innerHTML=txs.map(tx=>{
+    const col=TX_COLORS[tx.tx_type]||'#7c6af7';
+    return '<div class="tx-row"><div style="display:flex;align-items:center;gap:7px"><div style="width:3px;height:18px;border-radius:2px;background:'+col+';flex-shrink:0"></div><span class="font-mono" style="font-size:9px;font-weight:700;color:'+col+'">'+esc(tx.tx_type_name)+'</span></div>'+
+      '<div class="font-mono" style="font-size:10px;color:#9d8fff">'+esc(tx.hash.slice(0,28))+'…</div>'+
+      '<div class="font-mono" style="font-size:10px;color:#8888aa">'+shortAddr(tx.sender)+'</div>'+
+      '<div style="font-size:10px;color:#44445a">#'+tx.block_height+'</div>'+
+      '<div style="font-size:10px;color:#44445a">'+fmtTime(tx.timestamp)+'</div></div>';
+  }).join('');
+}
+
+function toggleLive(){
+  if(STATE.liveInterval){
+    clearInterval(STATE.liveInterval);STATE.liveInterval=null;
+    document.getElementById('live-btn').textContent='⟳ Auto-refresh';
+    document.getElementById('live-btn').className='btn-secondary';
+    document.getElementById('live-btn').style.fontSize='13px';
+  }else{
+    STATE.liveInterval=setInterval(()=>{if(currentPage==='explorer')renderExplorer();},2500);
+    document.getElementById('live-btn').innerHTML='<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22d3a0;animation:pulse-glow 1.5s infinite"></span> Live';
+    document.getElementById('live-btn').className='btn-primary';
+    document.getElementById('live-btn').style.fontSize='13px';
+  }
+}
+
+const landingSteps=[
+  {cat:'idea',emoji:'💡',title:'Project Created',desc:'Dharma Protocol'},
+  {cat:'community',emoji:'👤',title:'Alice joins',desc:'Frontend Developer'},
+  {cat:'community',emoji:'👤',title:'Bob joins',desc:'Smart Contract Dev'},
+  {cat:'design',emoji:'🎨',title:'Frontend completed',desc:'React + TailwindCSS'},
+  {cat:'development',emoji:'🔧',title:'Carol reviewed code',desc:'All tests passing'},
+  {cat:'testing',emoji:'✅',title:'Bug fixed',desc:'Critical path resolved'},
+  {cat:'deployment',emoji:'🚀',title:'v1.0 released',desc:'Live on Canopy testnet'},
+];
+function animateLanding(){
+  const container=document.getElementById('landing-tl');
+  if(!container)return;
+  let i=0;
+  const add=()=>{
+    if(i>=landingSteps.length)return;
+    const s=landingSteps[i];
+    const col=EVT_COLOR[s.cat]||'#7c6af7';
+    const item=document.createElement('div');
+    item.style.cssText='display:flex;gap:12px;padding-left:32px;margin-bottom:'+(i<landingSteps.length-1?'14':'0')+'px;position:relative;opacity:0;transform:translateY(8px);transition:all .4s ease';
+    item.innerHTML='<div style="position:absolute;left:13px;top:3px;width:12px;height:12px;border-radius:50%;background:'+col+';box-shadow:0 0 8px '+col+'80;border:2px solid #0a0a12"></div>'+
+      '<div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><span style="font-size:13px;font-weight:600;color:#e8e8f4">'+s.emoji+' '+esc(s.title)+'</span><div style="font-size:11px;color:#8888aa;margin-top:1px">'+esc(s.desc)+'</div></div><span style="font-size:10px;color:#44445a;white-space:nowrap;margin-left:8px">just now</span></div></div>';
+    container.appendChild(item);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{item.style.opacity='1';item.style.transform='translateY(0)';}));
+    i++;
+    if(i<landingSteps.length)setTimeout(add,420);
+  };
+  setTimeout(add,500);
+}
+
+seedData();
+animateLanding();
+try{
+  const saved=localStorage.getItem('dharma_wallet');
+  if(saved){const w=JSON.parse(saved);if(w&&w.connected&&w.address)STATE.wallet=w;}
+}catch(e){}
+updateWalletUI();
+</script>
+</body>
+</html>
